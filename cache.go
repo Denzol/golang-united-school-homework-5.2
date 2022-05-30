@@ -1,23 +1,47 @@
 package cache
 
-import "time"
+import (
+	"time"
+)
 
 type Cache struct {
+	myMap   map[string]string
+	flag    bool
+	timeMap map[string]time.Time
 }
 
 func NewCache() Cache {
-	return Cache{}
+	var new Cache
+	new.myMap = make(map[string]string)
+	new.timeMap = make(map[string]time.Time)
+	return new
 }
 
-func (receiver) Get(key string) (string, bool) {
-
+func (c *Cache) Put(key, value string) {
+	c.myMap[key] = value
 }
 
-func (receiver) Put(key, value string) {
+func (c *Cache) Get(key string) (string, bool) {
+	value, ok := c.myMap[key]
+	if ok == true {
+		return value, ok
+	} else {
+		return "", ok
+	}
 }
 
-func (receiver) Keys() []string {
+func (c *Cache) PutTill(key, value string, deadline time.Time) {
+	c.myMap[key] = value
+	c.timeMap[key] = deadline
 }
 
-func (receiver) PutTill(key, value string, deadline time.Time) {
+func (c *Cache) Keys() map[string]string {
+	u := time.Now()
+	for i, t := range c.timeMap {
+		if u.After(t) {
+			delete(c.timeMap, i)
+			delete(c.myMap, i)
+		}
+	}
+	return c.myMap
 }
