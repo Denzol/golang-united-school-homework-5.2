@@ -1,6 +1,9 @@
 package cache
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type Cache struct {
 	myMap   map[string]string
@@ -16,13 +19,19 @@ func NewCache() Cache {
 }
 
 func (c *Cache) Get(key string) (string, bool) {
+	u := time.Now()
+	for i, t := range c.timeMap {
+		if u.After(t) {
+			delete(c.timeMap, i)
+			delete(c.myMap, i)
+		}
+	}
+	fmt.Println(c.myMap)
 	value, ok := c.myMap[key]
-	if ok == true {
-		c.flag = ok
-		return value, c.flag
+	if !ok {
+		return "", false
 	} else {
-		c.flag = ok
-		return "", c.flag
+		return value, true
 	}
 }
 
