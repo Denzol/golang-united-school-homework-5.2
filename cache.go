@@ -18,9 +18,11 @@ func NewCache() Cache {
 func (c *Cache) Get(key string) (string, bool) {
 	value, ok := c.myMap[key]
 	if ok == true {
-		return value, ok
+		c.flag = ok
+		return value, c.flag
 	} else {
-		return "", ok
+		c.flag = ok
+		return "", c.flag
 	}
 }
 
@@ -38,7 +40,6 @@ func (c *Cache) Keys() []string {
 	keys := []string{}
 	for i, t := range c.timeMap {
 		if u.After(t) {
-			delete(c.timeMap, i)
 			delete(c.myMap, i)
 		}
 	}
